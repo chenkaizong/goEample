@@ -33,4 +33,7 @@ func main() {
 
 	fmt.Println(len(arr4)) //8
 	fmt.Println(cap(arr4)) // 14
+
+	// 6、切片是一个引用类型
+
 }
