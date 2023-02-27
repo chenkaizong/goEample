@@ -3,15 +3,15 @@ package main
 import (
 	"fmt"
 	"sync"
-	"time"
 )
 
-func run(wait *sync.WaitGroup) {
+var wait sync.WaitGroup
+
+func run(i int) {
 	var times int
 	for times < 10 {
 		times++
-		fmt.Println("tick", times)
-		time.Sleep(time.Second)
+		fmt.Printf("协程%v,第%v次\n", i, times)
 	}
 	defer wait.Done()
 }
@@ -20,12 +20,9 @@ func run(wait *sync.WaitGroup) {
 // 2、主进程执行完毕后 协程也会退出
 
 func main() {
-	var wait sync.WaitGroup
 	for i := 0; i < 10; i++ {
 		wait.Add(1)
-		go func() {
-			run(&wait)
-		}()
+		go run(i)
 	}
 	wait.Wait()
 
