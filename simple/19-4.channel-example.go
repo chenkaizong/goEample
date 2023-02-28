@@ -18,13 +18,23 @@ func addNumChan(ch chan int) {
 	wg.Done()
 }
 
-func printPrimeChan(ch chan int, i int) {
+func PrimeChan(ch chan int, printCh chan int, runCh chan bool) {
 	for v := range ch {
 		if IsPrime(v) {
-			// println(v, "是素数(协程号", i, ")")
+			printCh <- v
 		}
 	}
+	runCh <- true
+	if len(runCh) == cap(runCh) {
+		close(printCh)
+	}
 	wg.Done()
+}
+
+func printChan(printCh chan int) {
+	for v := range printCh {
+		println(v, "是素数")
+	}
 }
 
 func IsPrime(n int) bool {
@@ -48,12 +58,16 @@ func IsPrime(n int) bool {
 func main() {
 	starttime := time.Now().UnixMilli()
 	var ch1 = make(chan int, 10000)
+	var printCh = make(chan int, 100)
+	var runCount = make(chan bool, 10)
 	wg.Add(1)
 	go addNumChan(ch1)
-	for i := 0; i < 10; i++ {
+	for i := 0; i < len(runCount); i++ {
 		wg.Add(1)
-		go printPrimeChan(ch1, i)
+		go PrimeChan(ch1, printCh, runCount)
 	}
+	wg.Add(1)
+	go printChan(printCh)
 
 	wg.Wait()
 	endtime := time.Now().UnixMilli()
