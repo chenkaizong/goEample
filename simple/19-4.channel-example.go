@@ -25,9 +25,15 @@ func PrimeChan(ch chan int, printCh chan int, runCh chan bool) {
 		}
 	}
 	runCh <- true
-	if len(runCh) == cap(runCh) {
-		close(printCh)
+
+	wg.Done()
+}
+
+func closePrint(printCh chan int, runCh chan bool) {
+	for i := 0; i < 14; i++ {
+		<-runCh
 	}
+	close(printCh)
 	wg.Done()
 }
 
@@ -68,6 +74,8 @@ func main() {
 	}
 	wg.Add(1)
 	go printChan(printCh)
+	wg.Add(1)
+	go closePrint(printCh, runCount)
 
 	wg.Wait()
 	endtime := time.Now().UnixMilli()
