@@ -52,7 +52,7 @@ func main() {
 	for v := range ch1 {
 		wg.Add(1)
 		fmt.Println(v)
-		go printPrime(v*2500+1, (v+1)*2500)
+		go printPrime(v*25000+1, (v+1)*25000)
 	}
 
 	wg.Wait()

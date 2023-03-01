@@ -64,7 +64,7 @@ func IsPrime(n int) bool {
 
 func main() {
 	starttime := time.Now().UnixMilli()
-	var numCh = make(chan int, 10000)
+	var numCh = make(chan int, 100000)
 	var printCh = make(chan int, 100)
 	var runCountCh = make(chan bool, 10)
 	wg.Add(1)
