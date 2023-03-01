@@ -11,7 +11,7 @@ var wg sync.WaitGroup
 
 // 加入所有要判断的数
 func addNumChan(ch chan int) {
-	for i := 2; i < 10000; i++ {
+	for i := 2; i < cap(ch); i++ {
 		ch <- i
 	}
 	close(ch)
