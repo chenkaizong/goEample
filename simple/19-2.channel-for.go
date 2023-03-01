@@ -30,7 +30,7 @@ func IsPrime(n int) bool {
 func printPrime(start int, end int) {
 	for i := start; i <= end; i++ {
 		if IsPrime(i) {
-			// println(i, "是素数")
+			println(i, "是素数")
 		}
 	}
 	wg.Done()
