@@ -1,21 +1,25 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
-	var ch1 = make(chan int, 10)
+	var intChan = make(chan int, 10)
+	var stringChan = make(chan string, 10)
 	go func() {
 		for i := 0; i < 10; i++ {
-			ch1 <- i
+			intChan <- i
 		}
 	}()
 
-	var ch2 = make(chan string, 10)
 	go func() {
 		for i := 0; i < 10; i++ {
-			ch2 <- fmt.Sprintf("%d", i)
+			stringChan <- fmt.Sprintf("%d字符串", i)
 		}
 	}()
+
+	// 使用select 的时候不得使用 close 来关闭管道
 
 	// 监听的case中,没有满足条件的就阻塞
 	// 多个满足条件的就任选一个执行
@@ -25,11 +29,11 @@ func main() {
 
 	for {
 		select {
-		case v := <-ch1:
+		case v := <-intChan:
 			fmt.Println("数字", v)
 			break
-		case v := <-ch2:
-			fmt.Println("字符", v)
+		case v := <-stringChan:
+			fmt.Println("字符串", v)
 			break
 		}
 	}
