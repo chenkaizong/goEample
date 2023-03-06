@@ -11,12 +11,15 @@ type Person struct {
 	Score float64
 }
 
-func (Person) Method1() {
-
+func (person Person) Method1() int {
+	fmt.Println("this is method1")
+	return 10
 }
 
-func (Person) Aaa() {
-
+func (person *Person) Change(name string, age int, score float64) {
+	person.Name = name
+	person.Age = age
+	person.Score = score
 }
 
 func PrintStructFields(s interface{}) {
@@ -50,21 +53,50 @@ func PrintStructFields(s interface{}) {
 
 }
 
+func ChangeSturctFields(s interface{}) {
+	t := reflect.TypeOf(s)
+	v := reflect.ValueOf(s).Elem()
+	if t.Kind() != reflect.Struct && t.Elem().Kind() != reflect.Struct {
+		fmt.Println("不是结构题类")
+		return
+	}
+	name := v.FieldByName("Name") //名称索引
+	name.SetString("bbbbbbbb")
+}
+
 func PrintStructFn(s interface{}) {
 	t := reflect.TypeOf(s)
+	v := reflect.ValueOf(s)
 	if t.Kind() != reflect.Struct && t.Elem().Kind() != reflect.Struct {
 		fmt.Println("不是结构题类")
 		return
 	}
 
-	m := t.Method(0) //顺序是按照方法名的 assi码来操作的
-
+	m := t.Method(0) //顺序是按照方法名的 assi码来排序的
 	fmt.Printf("%v\n", m.Name)
+	// 值变量才能执行
+	method := v.MethodByName("Method1")
+	fmt.Println(method.Call(nil)[0])
+
+	change := v.MethodByName("Change")
+	var params []reflect.Value
+	params = append(params, reflect.ValueOf("xxx"))
+	params = append(params, reflect.ValueOf(111))
+	params = append(params, reflect.ValueOf(111.1))
+	fmt.Println(change.Call(params))
+
 }
 
 func main() {
 	var person Person = Person{"name", 10, 11.2}
+	// 获取属性
 	// PrintStructFields(person)
-	PrintStructFn(person)
+	// 修改属性
+	// ChangeSturctFields(&person)
+	// fmt.Println(person)
+
+	// 调用方法，方法中可以修改属性
+	PrintStructFn(&person)
+	fmt.Println(person)
 
 }
